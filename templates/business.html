@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSort AI - Business Solutions</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div class="theme-toggle">
+        <input type="checkbox" id="theme-switch" class="theme-switch">
+        <label for="theme-switch" class="theme-switch-label">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+        </label>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-recycle"></i>
+                EcoSort<span>AI</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/education"><i class="fas fa-book"></i> Education</a></li>
+                <li><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li class="active"><a href="/business"><i class="fas fa-briefcase"></i> Business</a></li>
+            </ul>
+            
+            <div class="nav-cta">
+                <a href="/#upload-section" class="nav-button">Try Now</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Header Section -->
+        <section class="business-header">
+            <div class="business-hero">
+                <h1 class="animate__animated animate__fadeIn">EcoSort AI for Business</h1>
+                <p class="animate__animated animate__fadeIn animate__delay-1s">Intelligent waste classification solutions for companies and organizations</p>
+                <div class="hero-buttons animate__animated animate__fadeInUp animate__delay-2s">
+                    <a href="#premium-features" class="btn-primary">View Solutions</a>
+                    <a href="#contact" class="btn-secondary">Contact Sales</a>
+                </div>
+                <div class="particles-container">
+                    <div class="particles"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NFT Marketplace Section -->
+        <section id="nft-section" class="nft-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2><i class="fas fa-certificate"></i> Recycling NFT Marketplace</h2>
+                <p>Buy, sell, and trade digital certificates representing recycled waste materials</p>
+            </div>
+            
+            <div class="nft-filter" data-aos="fade-up">
+                <button class="filter-btn active" data-filter="all">All Categories</button>
+                <button class="filter-btn" data-filter="plastic">Plastic</button>
+                <button class="filter-btn" data-filter="paper">Paper</button>
+                <button class="filter-btn" data-filter="metal">Metal</button>
+                <button class="filter-btn" data-filter="glass">Glass</button>
+            </div>
+            
+            <div class="nft-grid" data-aos="fade-up">
+                {% for item in nft_items %}
+                <div class="nft-card" data-category="{{ item.category }}">
+                    <div class="nft-image">
+                        <img src="{{ url_for('static', filename=item.image) }}" alt="{{ item.name }}">
+                        <div class="nft-badge">{{ item.category|capitalize }}</div>
+                    </div>
+                    <div class="nft-content">
+                        <h3>{{ item.name }}</h3>
+                        <div class="nft-description">{{ item.description }}</div>
+                        <div class="nft-details">
+                            <div class="nft-price">
+                                <i class="fab fa-ethereum"></i> {{ item.price }} ETH
+                            </div>
+                            <div class="nft-seller">
+                                <span>by</span> {{ item.seller }}
+                            </div>
+                        </div>
+                        <button class="btn-buy-nft" data-id="{{ item.id }}">
+                            Purchase NFT
+                        </button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="nft-create" data-aos="fade-up">
+                <div class="create-card">
+                    <div class="create-icon">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <h3>Create Your Own NFT</h3>
+                    <p>Turn your recycling efforts into valuable digital assets. Create an NFT for your recycled materials and join the marketplace.</p>
+                    <button class="btn-create-nft">Create NFT</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Premium Features Section -->
+        <section id="premium-features" class="premium-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2><i class="fas fa-gem"></i> Premium Features</h2>
+                <p>Advanced waste classification solutions for businesses and organizations</p>
+            </div>
+            
+            <div class="premium-grid" data-aos="fade-up">
+                {% for feature in premium_features %}
+                <div class="premium-card">
+                    <div class="premium-icon">
+                        <i class="fas {{ feature.icon }}"></i>
+                    </div>
+                    <div class="premium-content">
+                        <h3>{{ feature.name }}</h3>
+                        <p>{{ feature.description }}</p>
+                        <div class="premium-price">{{ feature.price }}</div>
+                        <button class="btn-subscribe">Subscribe Now</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            
+            <div class="enterprise-card" data-aos="fade-up">
+                <div class="enterprise-content">
+                    <div class="enterprise-icon">
+                        <i class="fas fa-building"></i>
+                    </div>
+                    <div class="enterprise-info">
+                        <h3>Enterprise Solutions</h3>
+                        <p>Need a custom solution? We offer enterprise-grade waste classification systems that can be tailored to your specific requirements. Contact our sales team to learn more.</p>
+                        <button class="btn-contact">Contact Sales</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section class="testimonials-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2><i class="fas fa-comments"></i> Client Testimonials</h2>
+                <p>See what our clients are saying about our waste classification solutions</p>
+            </div>
+            
+            <div class="testimonials-slider" data-aos="fade-up">
+                <div class="testimonial-card active">
+                    <div class="testimonial-content">
+                        The EcoSort AI system has revolutionized our recycling facility operations. We've increased our processing efficiency by 35% and reduced sorting errors significantly.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">JD</div>
+                        <div class="author-info">
+                            <h4>John Doe</h4>
+                            <p>Operations Manager, GreenRecycle Inc.</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        As a university campus, managing waste from 20,000+ students was challenging. EcoSort AI's smart bins have made recycling easier and more accurate. Our sustainability metrics have improved dramatically.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">SM</div>
+                        <div class="author-info">
+                            <h4>Sarah Miller</h4>
+                            <p>Sustainability Director, Pacific University</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        The analytics dashboard provided by EcoSort gives us unprecedented insights into our waste streams. We've been able to optimize our processes and reduce waste management costs by 22%.
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">RK</div>
+                        <div class="author-info">
+                            <h4>Robert Kim</h4>
+                            <p>CFO, Metropolitan Waste Management</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="testimonial-controls">
+                    <button class="prev-testimonial">
+                        <i class="fas fa-chevron-left"></i>
+                    </button>
+                    <div class="testimonial-indicators">
+                        <div class="indicator active"></div>
+                        <div class="indicator"></div>
+                        <div class="indicator"></div>
+                    </div>
+                    <button class="next-testimonial">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+            <div class="section-header" data-aos="fade-up">
+                <h2><i class="fas fa-envelope"></i> Get in Touch</h2>
+                <p>Contact us for more information about our business solutions</p>
+            </div>
+            
+            <div class="card" data-aos="fade-up">
+                <div class="card-header">
+                    <h3><i class="fas fa-paper-plane"></i> Contact Form</h3>
+                </div>
+                <div class="card-body">
+                    <form class="contact-form">
+                        <div class="form-group">
+                            <label for="name">Name</label>
+                            <input type="text" id="name" placeholder="Your name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="email">Email</label>
+                            <input type="email" id="email" placeholder="Your email" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="company">Company</label>
+                            <input type="text" id="company" placeholder="Your company">
+                        </div>
+                        <div class="form-group">
+                            <label for="message">Message</label>
+                            <textarea id="message" placeholder="How can we help you?" rows="4" required></textarea>
+                        </div>
+                        <button type="submit" class="btn-submit">Send Message</button>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- NFT Purchase Modal -->
+    <div id="nft-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal">&times;</span>
+            <h2>Purchase NFT</h2>
+            <div class="modal-body">
+                <div class="modal-item-preview">
+                    <img id="modal-item-image" src="" alt="NFT Image">
+                    <div class="modal-item-details">
+                        <h3 id="modal-item-name"></h3>
+                        <p id="modal-item-description"></p>
+                        <div class="modal-item-price">
+                            <i class="fab fa-ethereum"></i> <span id="modal-item-price"></span> ETH
+                        </div>
+                    </div>
+                </div>
+                
+                <form class="modal-form">
+                    <div class="form-group">
+                        <label for="wallet-address">Wallet Address</label>
+                        <input type="text" id="wallet-address" placeholder="Enter your wallet address" required>
+                    </div>
+                    <div class="form-actions">
+                        <button type="button" class="btn-cancel close-modal">Cancel</button>
+                        <button type="button" id="confirm-purchase" class="btn-confirm">Confirm Purchase</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">
+                    <i class="fas fa-recycle"></i> EcoSort<span>AI</span>
+                </div>
+                <p>Advanced waste classification using deep learning technology. Making recycling smarter and more efficient.</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin-in"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                </div>
+            </div>
+            
+            <div class="footer-links">
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="/education"><i class="fas fa-book"></i> Education</a></li>
+                        <li><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                        <li><a href="/business"><i class="fas fa-briefcase"></i> Business</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Resources</h3>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-file-alt"></i> Documentation</a></li>
+                        <li><a href="#"><i class="fas fa-question-circle"></i> FAQs</a></li>
+                        <li><a href="#"><i class="fas fa-users"></i> Community</a></li>
+                        <li><a href="#"><i class="fas fa-newspaper"></i> Blog</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <ul>
+                    <li><i class="fas fa-envelope"></i> info@ecosortai.com</li>
+                    <li><i class="fas fa-phone"></i> +1 (555) 123-4567</li>
+                    <li><i class="fas fa-map-marker-alt"></i> 123 Green Street, Eco City</li>
+                </ul>
+            </div>
+        </div>
+        
+        <div class="footer-bottom">
+            <p>&copy; 2023 EcoSort AI - All Rights Reserved</p>
+        </div>
+    </footer>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner">
+            <i class="fas fa-recycle fa-spin"></i>
+        </div>
+        <p>Processing your request...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/business.js') }}"></script>
+</body>
+</html>

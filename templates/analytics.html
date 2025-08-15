@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSort AI - Analytics Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div class="theme-toggle">
+        <input type="checkbox" id="theme-switch" class="theme-switch">
+        <label for="theme-switch" class="theme-switch-label">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+        </label>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-recycle"></i>
+                EcoSort<span>AI</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/education"><i class="fas fa-book"></i> Education</a></li>
+                <li class="active"><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="/business"><i class="fas fa-briefcase"></i> Business</a></li>
+            </ul>
+            
+            <div class="nav-cta">
+                <a href="/#upload-section" class="nav-button">Try Now</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <div class="logo animate__animated animate__fadeIn">
+                <span class="logo-icon"><i class="fas fa-chart-line"></i></span>
+                <h1>Analytics <span>Dashboard</span></h1>
+            </div>
+            <p class="tagline animate__animated animate__fadeIn animate__delay-1s">Track classification statistics and model performance</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Summary Statistics -->
+            <section class="stats-dashboard" data-aos="fade-up">
+                <div class="stats-grid">
+                    <div class="stat-card" data-aos="zoom-in" data-aos-delay="100">
+                        <div class="stat-icon"><i class="fas fa-image"></i></div>
+                        <div class="stat-number" data-count="{{ stats.total_classifications }}">{{ stats.total_classifications }}</div>
+                        <div class="stat-text">Total Classifications</div>
+                    </div>
+                    
+                    <div class="stat-card" data-aos="zoom-in" data-aos-delay="200">
+                        <div class="stat-icon"><i class="fas fa-leaf"></i></div>
+                        <div class="stat-number" data-count="{{ stats.organic_count }}">{{ stats.organic_count }}</div>
+                        <div class="stat-text">Organic Items</div>
+                    </div>
+                    
+                    <div class="stat-card" data-aos="zoom-in" data-aos-delay="300">
+                        <div class="stat-icon"><i class="fas fa-recycle"></i></div>
+                        <div class="stat-number" data-count="{{ stats.recyclable_count }}">{{ stats.recyclable_count }}</div>
+                        <div class="stat-text">Recyclable Items</div>
+                    </div>
+                    
+                    <div class="stat-card" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="stat-icon"><i class="fas fa-percentage"></i></div>
+                        <div class="stat-number" data-count="{{ stats.avg_confidence }}">{{ stats.avg_confidence }}</div>
+                        <div class="stat-text">Avg. Confidence</div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Classification Distribution -->
+            <section class="chart-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Classification Distribution</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-wrapper">
+                            <canvas id="distributionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Model Usage Comparison -->
+            <section class="chart-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-bar"></i> Model Usage</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-wrapper">
+                            <canvas id="modelUsageChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Confidence Over Time -->
+            <section class="chart-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line"></i> Confidence Trends</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart-wrapper">
+                            <canvas id="confidenceChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Recent Classifications -->
+            <section class="recent-classifications" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-history"></i> Recent Classifications</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-container">
+                            <table class="classifications-table">
+                                <thead>
+                                    <tr>
+                                        <th>Image</th>
+                                        <th>Date</th>
+                                        <th>Model</th>
+                                        <th>Classification</th>
+                                        <th>Confidence</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in recent_items %}
+                                    <tr>
+                                        <td>
+                                            <div class="table-image">
+                                                <img src="{{ url_for('static', filename=item.image_path) }}" alt="Classified item">
+                                            </div>
+                                        </td>
+                                        <td>{{ item.date }}</td>
+                                        <td>{{ item.model }}</td>
+                                        <td class="{% if 'Recyclable' in item.classification %}recyclable{% else %}organic{% endif %}">{{ item.classification }}</td>
+                                        <td>{{ item.confidence }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Compare Models -->
+            <section class="compare-models-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-balance-scale"></i> Compare Models</h3>
+                    </div>
+                    <div class="card-body">
+                        <p class="compare-intro">Upload an image to compare classification results across all models simultaneously.</p>
+                        
+                        <form id="compare-form" class="compare-form" enctype="multipart/form-data">
+                            <div class="file-input-container">
+                                <input type="file" name="compare_file" id="compare-file-input" accept="image/*" required>
+                                <label for="compare-file-input">
+                                    <div class="file-upload-box">
+                                        <i class="fas fa-upload"></i>
+                                        <span id="compare-file-name">Choose an image to compare</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <button type="submit" class="btn-compare">
+                                <i class="fas fa-sync-alt"></i> Run Comparison
+                            </button>
+                        </form>
+                        
+                        <div id="comparison-results" style="display: none;">
+                            <div class="comparison-image">
+                                <img id="comparison-img" alt="Comparison image">
+                            </div>
+                            
+                            <div class="model-comparison-grid">
+                                <div class="model-result vgg">
+                                    <h4>VGG16</h4>
+                                    <div class="result-pill"></div>
+                                    <div class="confidence-display">
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill"></div>
+                                        </div>
+                                        <span class="confidence-text"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="model-result resnet">
+                                    <h4>ResNet50</h4>
+                                    <div class="result-pill"></div>
+                                    <div class="confidence-display">
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill"></div>
+                                        </div>
+                                        <span class="confidence-text"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="model-result inception">
+                                    <h4>InceptionV3</h4>
+                                    <div class="result-pill"></div>
+                                    <div class="confidence-display">
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill"></div>
+                                        </div>
+                                        <span class="confidence-text"></span>
+                                    </div>
+                                </div>
+                                
+                                <div class="model-result ensemble">
+                                    <h4>Ensemble</h4>
+                                    <div class="result-pill"></div>
+                                    <div class="confidence-display">
+                                        <div class="confidence-bar">
+                                            <div class="confidence-fill"></div>
+                                        </div>
+                                        <span class="confidence-text"></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="comparison-conclusion">
+                                <h4>Conclusion</h4>
+                                <p id="comparison-text"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2023 EcoSort AI - Waste Classification System</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="{{ url_for('static', filename='js/analytics.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./static/uploads:/app/static/uploads
+      - ./models:/app/models
+    env_file:
+      - .env
+    restart: always

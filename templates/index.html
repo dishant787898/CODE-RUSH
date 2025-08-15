@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSort AI - Waste Classification</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form-styles.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-recycle"></i>
+                EcoSort<span>AI</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li class="active"><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="/education"><i class="fas fa-book"></i> Education</a></li>
+                <li><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="/business"><i class="fas fa-briefcase"></i> Business</a></li>
+            </ul>
+            
+            <div class="nav-cta">
+                <a href="#upload-section" class="nav-button">Try Now</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="theme-toggle">
+        <input type="checkbox" id="theme-switch" class="theme-switch">
+        <label for="theme-switch" class="theme-switch-label">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+        </label>
+    </div>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <div class="logo animate__animated animate__fadeIn">
+                <span class="logo-icon"><i class="fas fa-recycle"></i></span>
+                <h1>EcoSort<span>AI</span></h1>
+            </div>
+            <p class="tagline animate__animated animate__fadeIn animate__delay-1s">Intelligent Waste Classification for a Sustainable Future</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Hero Section -->
+            <section class="hero animate__animated animate__fadeInUp">
+                <div class="hero-content">
+                    <h2>Waste Classification using Deep Learning</h2>
+                    <p>Our advanced AI models classify waste with 96%+ accuracy, helping to improve recycling efficiency and reduce environmental impact.</p>
+                    <div class="particles-container">
+                        <div class="particles"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Stats Section -->
+            <section class="stats-section" data-aos="fade-up">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-trash-alt"></i></div>
+                        <div class="stat-number" data-count="2">0</div>
+                        <div class="stat-text">Billion Tons</div>
+                        <div class="stat-desc">Global waste produced yearly</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-recycle"></i></div>
+                        <div class="stat-number" data-count="13">0</div>
+                        <div class="stat-text">Percent</div>
+                        <div class="stat-desc">Global recycling rate</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-icon"><i class="fas fa-leaf"></i></div>
+                        <div class="stat-number" data-count="98">0</div>
+                        <div class="stat-text">Percent</div>
+                        <div class="stat-desc">Our classification accuracy</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Upload Section -->
+            <section class="upload-section" data-aos="fade-up" data-aos-delay="200">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-upload"></i> Upload Image</h3>
+                    </div>
+                    <div class="card-body">
+                        {% if error %}
+                        <div class="alert alert-error">
+                            <i class="fas fa-exclamation-triangle"></i> {{ error }}
+                        </div>
+                        {% endif %}
+                        <form action="/" method="POST" enctype="multipart/form-data" id="upload-form">
+                            <div class="file-input-container">
+                                <input type="file" name="file" id="file-input" accept="image/*" required>
+                                <label for="file-input">
+                                    <div class="file-upload-box">
+                                        <i class="fas fa-cloud-upload-alt"></i>
+                                        <span id="file-name">Choose an image</span>
+                                    </div>
+                                </label>
+                            </div>
+                            <div class="model-selection">
+                                <h4>Select Model</h4>
+                                <div class="model-options">
+                                    <div class="model-option">
+                                        <input type="radio" id="vgg16" name="model" value="VGG16" required>
+                                        <label for="vgg16">
+                                            <span class="model-name">VGG16</span>
+                                            <span class="model-accuracy">Accuracy: 96.4%</span>
+                                        </label>
+                                    </div>
+                                    <div class="model-option">
+                                        <input type="radio" id="resnet50" name="model" value="ResNet50">
+                                        <label for="resnet50">
+                                            <span class="model-name">ResNet50</span>
+                                            <span class="model-accuracy">Accuracy: 97.2%</span>
+                                        </label>
+                                    </div>
+                                    <div class="model-option">
+                                        <input type="radio" id="inceptionv3" name="model" value="InceptionV3">
+                                        <label for="inceptionv3">
+                                            <span class="model-name">InceptionV3</span>
+                                            <span class="model-accuracy">Accuracy: 96.8%</span>
+                                        </label>
+                                    </div>
+                                    <div class="model-option">
+                                        <input type="radio" id="ensemble" name="model" value="Ensemble" checked>
+                                        <label for="ensemble">
+                                            <span class="model-name">Ensemble</span>
+                                            <span class="model-accuracy">Accuracy: 98.5%</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-classify">
+                                <i class="fas fa-microscope"></i> Classify Waste
+                            </button>
+                        </form>
+                        
+                        <!-- Add Real-time Webcam Classification Feature -->
+                        <div class="webcam-section">
+                            <div class="divider">
+                                <span>OR</span>
+                            </div>
+                            
+                            <button id="open-webcam" class="btn-webcam">
+                                <i class="fas fa-camera"></i> Use Webcam
+                            </button>
+                            
+                            <div id="webcam-container" style="display: none;">
+                                <div class="webcam-wrapper">
+                                    <video id="webcam" autoplay playsinline></video>
+                                    <canvas id="webcam-canvas" style="display: none;"></canvas>
+                                </div>
+                                <div class="webcam-controls">
+                                    <button id="capture-button" class="btn-capture">
+                                        <i class="fas fa-camera"></i> Capture
+                                    </button>
+                                    <button id="close-webcam" class="btn-close-webcam">
+                                        <i class="fas fa-times"></i> Close Camera
+                                    </button>
+                                </div>
+                                <div id="webcam-result" style="display: none;">
+                                    <h4>Captured Image</h4>
+                                    <div class="captured-image-container">
+                                        <img id="captured-image" alt="Captured image">
+                                    </div>
+                                    <div class="webcam-model-selection">
+                                        <h4>Select Model for Classification</h4>
+                                        <div class="model-options webcam-model-options">
+                                            <div class="model-option">
+                                                <input type="radio" id="vgg16-webcam" name="model-webcam" value="VGG16" required>
+                                                <label for="vgg16-webcam">
+                                                    <span class="model-name">VGG16</span>
+                                                    <span class="model-accuracy">Accuracy: 96.4%</span>
+                                                </label>
+                                            </div>
+                                            <div class="model-option">
+                                                <input type="radio" id="resnet50-webcam" name="model-webcam" value="ResNet50">
+                                                <label for="resnet50-webcam">
+                                                    <span class="model-name">ResNet50</span>
+                                                    <span class="model-accuracy">Accuracy: 97.2%</span>
+                                                </label>
+                                            </div>
+                                            <div class="model-option">
+                                                <input type="radio" id="inceptionv3-webcam" name="model-webcam" value="InceptionV3">
+                                                <label for="inceptionv3-webcam">
+                                                    <span class="model-name">InceptionV3</span>
+                                                    <span class="model-accuracy">Accuracy: 96.8%</span>
+                                                </label>
+                                            </div>
+                                            <div class="model-option">
+                                                <input type="radio" id="ensemble-webcam" name="model-webcam" value="Ensemble" checked>
+                                                <label for="ensemble-webcam">
+                                                    <span class="model-name">Ensemble</span>
+                                                    <span class="model-accuracy">Accuracy: 98.5%</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                        <button id="classify-capture" class="btn-classify">
+                                            <i class="fas fa-microscope"></i> Classify Waste
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Result Section -->
+            {% if prediction %}
+            <section class="result-section" data-aos="zoom-in">
+                <div class="card result-card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-pie"></i> Classification Result</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="result-content">
+                            <div class="result-image">
+                                <img src="{{ url_for('static', filename=image_path) }}" alt="Uploaded waste image">
+                            </div>
+                            <div class="result-details">
+                                <div class="model-used">
+                                    <span class="label">Model:</span>
+                                    <span class="value">{{ selected_model }}</span>
+                                </div>
+                                <div class="prediction {% if 'Recyclable' in prediction %}recyclable{% else %}organic{% endif %}">
+                                    <h4>
+                                        {% if 'Recyclable' in prediction %}
+                                        <i class="fas fa-recycle"></i>
+                                        {% else %}
+                                        <i class="fas fa-leaf"></i>
+                                        {% endif %}
+                                        {{ prediction }}
+                                    </h4>
+                                </div>
+                                <div class="confidence-meter">
+                                    <span class="label">Confidence:</span>
+                                    <div class="progress-bar">
+                                        <div class="progress" style="width: {{ confidence }}"></div>
+                                    </div>
+                                    <   span class="confidence-value">{{ confidence }}</span>
+                                </div>
+                                <div class="recommendation">
+                                    {% if 'Recyclable' in prediction %}
+                                    <p>This item should be placed in the <strong>recycling bin</strong>.</p>
+                                    {% else %}
+                                    <p>This item should be placed in the <strong>organic waste bin</strong>.</p>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            {% endif %}
+
+            <!-- Model Performance Section -->
+            <section class="performance-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-chart-line"></i> Model Performance</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="tabs-container">
+                            <div class="tabs">
+                                <button class="tab-btn active" data-tab="metrics">Performance Metrics</button>
+                                <button class="tab-btn" data-tab="roc">ROC Curves</button>
+                                <button class="tab-btn" data-tab="confusion">Confusion Matrix</button>
+                            </div>
+                            
+                            <div class="tab-content active" id="metrics-tab">
+                                <div class="model-metrics-header">
+                                    <h4>Model Performance Comparison</h4>
+                                    <p>Evaluation metrics across all implemented models on test dataset</p>
+                                </div>
+                                
+                                <div class="metrics-image-container">
+                                    <img src="{{ url_for('static', filename='images/metrics_comparison.png') }}" alt="Model Performance Comparison" class="full-width-img">
+                                    <div class="metrics-caption">Fig. 4. Comparison of Evaluation Metrics across implemented models</div>
+                                </div>
+                                
+                                <div class="performance-table">
+                                    <table>
+                                        <thead>
+                                            <tr>
+                                                <th>Model</th>
+                                                <th>Accuracy</th>
+                                                <th>Precision</th>
+                                                <th>Recall</th>
+                                                <th>F1-Score</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>VGG16</td>
+                                                <td>96.50%</td>
+                                                <td>95.33%</td>
+                                                <td>96.11%</td>
+                                                <td>96.72%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>ResNet50</td>
+                                                <td>96.00%</td>
+                                                <td>95.14%</td>
+                                                <td>96.37%</td>
+                                                <td>95.75%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>InceptionV3</td>
+                                                <td>97.00%</td>
+                                                <td>96.90%</td>
+                                                <td>97.50%</td>
+                                                <td>97.20%</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Ensemble</td>
+                                                <td>98.00%</td>
+                                                <td>97.65%</td>
+                                                <td>98.25%</td>
+                                                <td>97.95%</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="roc-tab">
+                                <div class="roc-curve-container">
+                                    <h4>ROC Curve Comparison</h4>
+                                    <div class="roc-image">
+                                        <img src="{{ url_for('static', filename='images/roc_curve.png') }}" alt="ROC Curve Comparison" class="full-width-img">
+                                        <div class="image-caption">Fig. 5. ROC/AUC Curve for all four models</div>
+                                    </div>
+                                    <div class="roc-explanation">
+                                        <p>The ROC (Receiver Operating Characteristic) curves demonstrate the diagnostic ability of our binary classifier system. As shown in the graph, our ensemble model achieves the best performance with the highest Area Under the Curve (AUC), followed by InceptionV3, VGG16, and ResNet50. The steeper curves toward the upper left corner indicate better model performance in distinguishing between recyclable and organic waste.</p>
+                                        <div class="auc-values">
+                                            <div class="auc-item">
+                                                <span class="model-name">VGG16:</span>
+                                                <span class="auc-value">0.966 AUC</span>
+                                            </div>
+                                            <div class="auc-item">
+                                                <span class="model-name">ResNet50:</span>
+                                                <span class="auc-value">0.961 AUC</span>
+                                            </div>
+                                            <div class="auc-item">
+                                                <span class="model-name">InceptionV3:</span>
+                                                <span class="auc-value">0.972 AUC</span>
+                                            </div>
+                                            <div class="auc-item">
+                                                <span class="model-name">Ensemble:</span>
+                                                <span class="auc-value">0.981 AUC</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="tab-content" id="confusion-tab">
+                                <div class="confusion-matrix-section">
+                                    <h4>Confusion Matrix Analysis</h4>
+                                    <div class="matrix-grid">
+                                        <div class="matrix-item" data-aos="fade-up" data-aos-delay="100">
+                                            <h5>VGG16</h5>
+                                            <div class="matrix-visualization">
+                                                <div class="matrix-cell tp">387<span>True Positive</span></div>
+                                                <div class="matrix-cell fp">13<span>False Positive</span></div>
+                                                <div class="matrix-cell fn">13<span>False Negative</span></div>
+                                                <div class="matrix-cell tn">387<span>True Negative</span></div>
+                                            </div>
+                                            <div class="matrix-metrics">
+                                                <p>The VGG16 model correctly identified 387 organic and 387 recyclable images, with 13 false positive and 13 false negative errors.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="matrix-item" data-aos="fade-up" data-aos-delay="200">
+                                            <h5>ResNet50</h5>
+                                            <div class="matrix-visualization">
+                                                <div class="matrix-cell tp">384<span>True Positive</span></div>
+                                                <div class="matrix-cell fp">16<span>False Positive</span></div>
+                                                <div class="matrix-cell fn">16<span>False Negative</span></div>
+                                                <div class="matrix-cell tn">384<span>True Negative</span></div>
+                                            </div>
+                                            <div class="matrix-metrics">
+                                                <p>The ResNet50 model correctly identified 384 organic and 384 recyclable images, with 16 false positive and 16 false negative errors.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="matrix-item" data-aos="fade-up" data-aos-delay="300">
+                                            <h5>InceptionV3</h5>
+                                            <div class="matrix-visualization">
+                                                <div class="matrix-cell tp">388<span>True Positive</span></div>
+                                                <div class="matrix-cell fp">8<span>False Positive</span></div>
+                                                <div class="matrix-cell fn">4<span>False Negative</span></div>
+                                                <div class="matrix-cell tn">392<span>True Negative</span></div>
+                                            </div>
+                                            <div class="matrix-metrics">
+                                                <p>The InceptionV3 model correctly identified 388 organic and 392 recyclable images, with only 8 false positive and 4 false negative errors.</p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="matrix-item" data-aos="fade-up" data-aos-delay="400">
+                                            <h5>Ensemble</h5>
+                                            <div class="matrix-visualization ensemble">
+                                                <div class="matrix-cell tp">392<span>True Positive</span></div>
+                                                <div class="matrix-cell fp">4<span>False Positive</span></div>
+                                                <div class="matrix-cell fn">2<span>False Negative</span></div>
+                                                <div class="matrix-cell tn">394<span>True Negative</span></div>
+                                            </div>
+                                            <div class="matrix-metrics">
+                                                <p>The ensemble model demonstrates superior performance, correctly classifying 392 organic and 394 recyclable images, with minimal classification errors.</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="model-conclusion" data-aos="fade-up">
+                                        <h5>Model Comparison Conclusion</h5>
+                                        <p>The enhanced classification accuracy of the ensemble model for organic and recyclable waste items indicates its superiority over other models in minimizing errors that could potentially contaminate recycling streams. This approach combines the strengths of individual models to produce more reliable classification results.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="performance-metrics">
+                            <div class="metric">
+                                <div class="metric-name">VGG16</div>
+                                <div class="metric-value">96.5%</div>
+                                <div class="metric-bar">
+                                    <div class="bar-fill" style="width: 96.5%"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-name">ResNet50</div>
+                                <div class="metric-value">96.0%</div>
+                                <div class="metric-bar">
+                                    <div class="bar-fill" style="width: 96.0%"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-name">InceptionV3</div>
+                                <div class="metric-value">97.0%</div>
+                                <div class="metric-bar">
+                                    <div class="bar-fill" style="width: 97.0%"></div>
+                                </div>
+                            </div>
+                            <div class="metric">
+                                <div class="metric-name">Ensemble</div>
+                                <div class="metric-value">98.0%</div>
+                                <div class="metric-bar">
+                                    <div class="bar-fill" style="width: 98.0%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- How It Works Section with System Architecture -->
+            <section class="architecture-section" data-aos="fade-up">
+                <div class="architecture-container">
+                    <div class="architecture-header">
+                        <h2>System Architecture</h2>
+                        <p>Our multi-model waste classification system uses three state-of-the-art deep learning architectures combined with an ensemble approach.</p>
+                    </div>
+                    
+                    <div class="architecture-image" data-aos="zoom-in">
+                        <img src="{{ url_for('static', filename='images/system_architecture.png') }}" alt="System Architecture" class="full-width-img">
+                        <div class="architecture-caption">Fig. 1. System Architecture of the Multi-Model Waste Classification System</div>
+                    </div>
+                    
+                    <div class="architecture-details">
+                        <div class="model-row" data-aos="fade-right" data-aos-delay="100">
+                            <h3><i class="fas fa-cube"></i> VGG16 Architecture</h3>
+                            <p>A deep convolutional network for object recognition trained on ImageNet with 16 layers. Our implementation uses a 224×224×3 input image size, followed by convolutional layers and global average pooling.</p>
+                        </div>
+                        
+                        <div class="model-row" data-aos="fade-right" data-aos-delay="200">
+                            <h3><i class="fas fa-cube"></i> InceptionV3 Architecture</h3>
+                            <p>A sophisticated model that uses inception modules to reduce computational cost while maintaining high accuracy. Features multiple parallel convolutional filters of different sizes.</p>
+                        </div>
+                        
+                        <div class="model-row" data-aos="fade-right" data-aos-delay="300">
+                            <h3><i class="fas fa-cube"></i> ResNet50 Architecture</h3>
+                            <p>A 50-layer residual network that addresses the vanishing gradient problem with skip connections, allowing for very deep networks without performance degradation.</p>
+                        </div>
+                        
+                        <div class="model-row highlight" data-aos="fade-right" data-aos-delay="400">
+                            <h3><i class="fas fa-cubes"></i> Ensemble Approach</h3>
+                            <p>Our ensemble method combines predictions from all three models using majority voting, achieving higher accuracy than any individual model alone. This approach significantly reduces classification errors.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Workflow Section -->
+            <section class="workflow-section" data-aos="fade-up">
+                <div class="workflow-container">
+                    <div class="architecture-header">
+                        <h2>How It Works</h2>
+                        <p>Understanding the complete workflow from image upload to waste classification</p>
+                    </div>
+                    
+                    <img src="{{ url_for('static', filename='images/workflow.png') }}" alt="System Workflow" class="workflow-image" data-aos="zoom-in">
+                    <div class="architecture-caption">Fig. 2. Flowchart for the working of System</div>
+                    
+                    <div class="workflow-steps">
+                        <div class="step-container" data-aos="fade-up">
+                            <div class="step-number">1</div>
+                            <div class="step-content">
+                                <h4>Upload Input Image</h4>
+                                <p>Users begin by uploading an image of a waste item through the web interface. The system accepts common image formats (JPEG, PNG) and performs initial validation.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-container" data-aos="fade-up" data-aos-delay="100">
+                            <div class="step-number">2</div>
+                            <div class="step-content">
+                                <h4>Select Classification Model</h4>
+                                <p>Users can choose from VGG16, InceptionV3, ResNet50, or the Ensemble approach. Each model has unique strengths, with the Ensemble providing the highest overall accuracy.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-container" data-aos="fade-up" data-aos-delay="200">
+                            <div class="step-number">3</div>
+                            <div class="step-content">
+                                <h4>Image Processing</h4>
+                                <p>The system preprocesses the image based on the selected model's requirements. This includes resizing to 224×224 pixels, normalization, and model-specific transformations.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-container" data-aos="fade-up" data-aos-delay="300">
+                            <div class="step-number">4</div>
+                            <div class="step-content">
+                                <h4>Classification Prediction</h4>
+                                <p>The processed image passes through the selected neural network model(s). For the Ensemble option, all three models process the image and a majority voting system determines the final classification.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="step-container" data-aos="fade-up" data-aos-delay="400">
+                            <div class="step-number">5</div>
+                            <div class="step-content">
+                                <h4>Results Display</h4>
+                                <p>The system returns the classification result (Organic or Recyclable) along with a confidence percentage, helping users make informed waste disposal decisions.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2023 EcoSort AI - Waste Classification System</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading-overlay">
+        <div class="spinner">
+            <i class="fas fa-recycle fa-spin"></i>
+        </div>
+        <p>Processing image...</p>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>

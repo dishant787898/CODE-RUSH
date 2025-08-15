@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoSort AI - Waste Education</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+</head>
+<body>
+    <div class="theme-toggle">
+        <input type="checkbox" id="theme-switch" class="theme-switch">
+        <label for="theme-switch" class="theme-switch-label">
+            <i class="fas fa-sun"></i>
+            <i class="fas fa-moon"></i>
+        </label>
+    </div>
+    
+    <!-- Navigation Bar -->
+    <nav class="main-nav">
+        <div class="nav-container">
+            <a href="/" class="nav-logo">
+                <i class="fas fa-recycle"></i>
+                EcoSort<span>AI</span>
+            </a>
+            
+            <ul class="nav-links">
+                <li><a href="/"><i class="fas fa-home"></i> Home</a></li>
+                <li class="active"><a href="/education"><i class="fas fa-book"></i> Education</a></li>
+                <li><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
+                <li><a href="/business"><i class="fas fa-briefcase"></i> Business</a></li>
+            </ul>
+            
+            <div class="nav-cta">
+                <a href="/#upload-section" class="nav-button">Try Now</a>
+            </div>
+        </div>
+    </nav>
+    
+    <div class="container">
+        <!-- Header Section -->
+        <header>
+            <div class="logo animate__animated animate__fadeIn">
+                <span class="logo-icon"><i class="fas fa-recycle"></i></span>
+                <h1>EcoSort<span>AI</span> Education</h1>
+            </div>
+            <p class="tagline animate__animated animate__fadeIn animate__delay-1s">Learn about waste classification and its environmental impact</p>
+        </header>
+
+        <!-- Main Content -->
+        <main>
+            <!-- Hero Section -->
+            <section class="hero education-hero animate__animated animate__fadeInUp">
+                <div class="hero-content">
+                    <h2>Understanding Waste Classification</h2>
+                    <p>Proper waste sorting is crucial for effective recycling and environmental protection. Learn how to identify different types of waste and their correct disposal methods.</p>
+                </div>
+            </section>
+
+            <!-- Waste Types Section -->
+            <section class="waste-types-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-trash-alt"></i> Types of Waste</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="waste-grid">
+                            <div class="waste-type" data-aos="fade-up" data-aos-delay="100">
+                                <div class="waste-icon organic">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <h4>Organic Waste</h4>
+                                <p>Biodegradable waste that comes from plants or animals. Examples include food scraps, yard waste, and paper products.</p>
+                                <div class="examples">
+                                    <span>Food scraps</span>
+                                    <span>Garden waste</span>
+                                    <span>Wood</span>
+                                    <span>Paper</span>
+                                </div>
+                            </div>
+                            
+                            <div class="waste-type" data-aos="fade-up" data-aos-delay="200">
+                                <div class="waste-icon recyclable">
+                                    <i class="fas fa-recycle"></i>
+                                </div>
+                                <h4>Recyclable Waste</h4>
+                                <p>Materials that can be processed and turned into new products. Includes paper, plastics, glass, and metals.</p>
+                                <div class="examples">
+                                    <span>Plastic bottles</span>
+                                    <span>Glass containers</span>
+                                    <span>Aluminum cans</span>
+                                    <span>Cardboard</span>
+                                </div>
+                            </div>
+                            
+                            <div class="waste-type" data-aos="fade-up" data-aos-delay="300">
+                                <div class="waste-icon hazardous">
+                                    <i class="fas fa-radiation"></i>
+                                </div>
+                                <h4>Hazardous Waste</h4>
+                                <p>Waste that poses substantial threats to public health and the environment. Requires special handling and disposal.</p>
+                                <div class="examples">
+                                    <span>Batteries</span>
+                                    <span>Electronics</span>
+                                    <span>Chemicals</span>
+                                    <span>Medical waste</span>
+                                </div>
+                            </div>
+                            
+                            <div class="waste-type" data-aos="fade-up" data-aos-delay="400">
+                                <div class="waste-icon landfill">
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                                <h4>Landfill Waste</h4>
+                                <p>Waste that cannot be recycled or composted and is sent to landfills. Goal should be to minimize this type.</p>
+                                <div class="examples">
+                                    <span>Styrofoam</span>
+                                    <span>Certain plastics</span>
+                                    <span>Diapers</span>
+                                    <span>Broken ceramics</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Environmental Impact Section -->
+            <section class="impact-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-globe-americas"></i> Environmental Impact</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="impact-stats">
+                            <div class="impact-stat" data-aos="zoom-in" data-aos-delay="100">
+                                <div class="stat-value">2.01B</div>
+                                <div class="stat-label">Tonnes of municipal solid waste generated annually</div>
+                            </div>
+                            <div class="impact-stat" data-aos="zoom-in" data-aos-delay="200">
+                                <div class="stat-value">33%</div>
+                                <div class="stat-label">Of waste is not managed in an environmentally safe manner</div>
+                            </div>
+                            <div class="impact-stat" data-aos="zoom-in" data-aos-delay="300">
+                                <div class="stat-value">5%</div>
+                                <div class="stat-label">Of global greenhouse gas emissions come from waste</div>
+                            </div>
+                            <div class="impact-stat" data-aos="zoom-in" data-aos-delay="400">
+                                <div class="stat-value">79%</div>
+                                <div class="stat-label">Of all plastic ever produced is in landfills or the environment</div>
+                            </div>
+                        </div>
+                        
+                        <div class="impact-chart-container" data-aos="fade-up">
+                            <h4>Global Waste Composition</h4>
+                            <div class="chart-wrapper">
+                                <canvas id="wasteCompositionChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="impact-text" data-aos="fade-up">
+                            <h4>Benefits of Proper Waste Classification</h4>
+                            <ul class="benefit-list">
+                                <li>
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Reduces landfill waste and extends landfill life</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Conserves natural resources and reduces the need for raw materials</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Reduces greenhouse gas emissions from landfills</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Saves energy in manufacturing processes compared to using virgin materials</span>
+                                </li>
+                                <li>
+                                    <i class="fas fa-check-circle"></i>
+                                    <span>Creates jobs in recycling and waste management industries</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <!-- Resources Section -->
+            <section class="resources-section" data-aos="fade-up">
+                <div class="card">
+                    <div class="card-header">
+                        <h3><i class="fas fa-link"></i> Helpful Resources</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="resources-grid">
+                            <a href="https://www.epa.gov/recycle" target="_blank" class="resource-item" data-aos="fade-up" data-aos-delay="100">
+                                <div class="resource-icon">
+                                    <i class="fas fa-leaf"></i>
+                                </div>
+                                <h4>EPA Recycling Basics</h4>
+                                <p>Learn the fundamentals of recycling and its benefits from the Environmental Protection Agency.</p>
+                            </a>
+                            
+                            <a href="https://www.nationalgeographic.com/environment/article/how-to-reduce-your-plastic-use" target="_blank" class="resource-item" data-aos="fade-up" data-aos-delay="200">
+                                <div class="resource-icon">
+                                    <i class="fas fa-globe"></i>
+                                </div>
+                                <h4>National Geographic</h4>
+                                <p>Tips and guides to reduce plastic waste and live more sustainably.</p>
+                            </a>
+                            
+                            <a href="https://earth911.com/recycling-guide/" target="_blank" class="resource-item" data-aos="fade-up" data-aos-delay="300">
+                                <div class="resource-icon">
+                                    <i class="fas fa-search"></i>
+                                </div>
+                                <h4>Earth911 Recycling Guide</h4>
+                                <p>Comprehensive recycling guide with information on how to recycle hundreds of materials.</p>
+                            </a>
+                            
+                            <a href="https://www.worldwildlife.org/initiatives/plastic" target="_blank" class="resource-item" data-aos="fade-up" data-aos-delay="400">
+                                <div class="resource-icon">
+                                    <i class="fas fa-paw"></i>
+                                </div>
+                                <h4>World Wildlife Fund</h4>
+                                <p>Learn about the impact of plastic pollution on wildlife and ecosystems.</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2023 EcoSort AI - Waste Classification System</p>
+                <div class="social-links">
+                    <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize AOS
+            AOS.init({
+                duration: 800,
+                easing: 'ease-out',
+                once: true
+            });
+            
+            // Theme switcher
+            const themeSwitch = document.getElementById('theme-switch');
+            if (themeSwitch) {
+                // Check for saved theme preference
+                const savedTheme = localStorage.getItem('theme') || (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+                document.documentElement.setAttribute('data-theme', savedTheme);
+                themeSwitch.checked = savedTheme === 'dark';
+                
+                // Theme switch event listener
+                themeSwitch.addEventListener('change', function() {
+                    const theme = this.checked ? 'dark' : 'light';
+                    document.documentElement.setAttribute('data-theme', theme);
+                    localStorage.setItem('theme', theme);
+                    
+                    // Redraw charts
+                    if (window.wasteCompositionChart) {
+                        window.wasteCompositionChart.update();
+                    }
+                });
+            }
+            
+            // Waste Composition Chart
+            const ctxWaste = document.getElementById('wasteCompositionChart');
+            if (ctxWaste) {
+                const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+                const textColor = isDark ? '#ecf0f1' : '#2c3e50';
+                
+                window.wasteCompositionChart = new Chart(ctxWaste, {
+                    type: 'pie',
+                    data: {
+                        labels: ['Food & Green', 'Paper & Cardboard', 'Plastic', 'Glass', 'Metal', 'Other'],
+                        datasets: [{
+                            data: [44, 17, 12, 5, 4, 18],
+                            backgroundColor: [
+                                '#2ecc71',
+                                '#3498db',
+                                '#e74c3c',
+                                '#9b59b6',
+                                '#f39c12',
+                                '#95a5a6'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'right',
+                                labels: {
+                                    color: textColor,
+                                    font: {
+                                        size: 12
+                                    }
+                                }
+                            },
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.label}: ${context.raw}%`;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
