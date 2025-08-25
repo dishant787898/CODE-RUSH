@@ -1,21 +1,11 @@
 flask==2.0.1
 numpy==1.23.5
-tensorflow==2.10.0; python_version < '3.11'
-tensorflow-cpu==2.10.0; python_version >= '3.11'
+tensorflow==2.10.0
+tensorflow-cpu==2.10.0
 pillow==9.5.0
 python-dotenv==0.21.1
 gunicorn==20.1.0
 waitress==2.1.2
 flask-cors==3.0.10
 opencv-python-headless==4.7.0.72
-protobuf==3.19.6flask
-numpy
-tensorflow
-tensorflow-cpu
-pillow
-python-dotenv
-gunicorn
-waitress
-flask-cors
-opencv-python-headless
-protobuf
+protobuf==3.19.6
