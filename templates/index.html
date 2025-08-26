@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>EcoSort AI - Waste Classification</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/form-styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/form-styles.css')}}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
@@ -99,6 +99,14 @@
                             <i class="fas fa-exclamation-triangle"></i> {{ error }}
                         </div>
                         {% endif %}
+
+            {% if prediction %}
+            <div style="text-align:center; margin-top: 20px;">
+                <button id="finish-btn" class="btn-finish" style="background:#e74c3c;color:#fff;padding:10px 24px;border:none;border-radius:4px;cursor:pointer;font-size:1rem;">
+                    <i class="fas fa-check"></i> Finish
+                </button>
+            </div>
+            {% endif %}
                         <form action="/" method="POST" enctype="multipart/form-data" id="upload-form">
                             <div class="file-input-container">
                                 <input type="file" name="file" id="file-input" accept="image/*" required>
@@ -248,9 +256,9 @@
                                 <div class="confidence-meter">
                                     <span class="label">Confidence:</span>
                                     <div class="progress-bar">
-                                        <div class="progress" style="width: {{ confidence }}"></div>
+                                        <div class="progress" style="width: {{ confidence }} %"></div>
                                     </div>
-                                    <   span class="confidence-value">{{ confidence }}</span>
+                                    <span class="confidence-value">{{ confidence }}</span>
                                 </div>
                                 <div class="recommendation">
                                     {% if 'Recyclable' in prediction %}
@@ -266,7 +274,7 @@
             </section>
             {% endif %}
 
-            <!-- Model Performance Section -->
+            <!-- Model Performance Section
             <section class="performance-section" data-aos="fade-up">
                 <div class="card">
                     <div class="card-header">
@@ -465,8 +473,8 @@
                     </div>
                 </div>
             </section>
-            
-            <!-- How It Works Section with System Architecture -->
+             -->
+            <!-- How It Works Section with System Architecture
             <section class="architecture-section" data-aos="fade-up">
                 <div class="architecture-container">
                     <div class="architecture-header">
@@ -475,7 +483,7 @@
                     </div>
                     
                     <div class="architecture-image" data-aos="zoom-in">
-                        <img src="{{ url_for('static', filename='images/system_architecture.png') }}" alt="System Architecture" class="full-width-img">
+                        <img src="{{ url_for('static', filename='images/System Architecture.jpg') }}" alt="System Architecture" class="full-width-img">
                         <div class="architecture-caption">Fig. 1. System Architecture of the Multi-Model Waste Classification System</div>
                     </div>
                     
@@ -501,7 +509,7 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> -->
 
             <!-- Workflow Section -->
             <section class="workflow-section" data-aos="fade-up">
@@ -511,7 +519,7 @@
                         <p>Understanding the complete workflow from image upload to waste classification</p>
                     </div>
                     
-                    <img src="{{ url_for('static', filename='images/workflow.png') }}" alt="System Workflow" class="workflow-image" data-aos="zoom-in">
+                    <!-- <img src="{{ url_for('static', filename='images/workflow.png') }}" alt="System Workflow" class="workflow-image" data-aos="zoom-in"> -->
                     <div class="architecture-caption">Fig. 2. Flowchart for the working of System</div>
                     
                     <div class="workflow-steps">
@@ -562,7 +570,7 @@
         <!-- Footer -->
         <footer>
             <div class="footer-content">
-                <p>&copy; 2023 EcoSort AI - Waste Classification System</p>
+                <p>&copy; 2025 EcoSort AI - Waste Classification System</p>
                 <div class="social-links">
                     <a href="#" class="social-icon"><i class="fab fa-github"></i></a>
                     <a href="#" class="social-icon"><i class="fab fa-linkedin"></i></a>
@@ -585,5 +593,23 @@
     <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/webcam.js') }}"></script>
+<script>
+// Hide result section and reset upload form when Finish is clicked
+document.addEventListener('DOMContentLoaded', function() {
+    var finishBtn = document.getElementById('finish-btn');
+    if (finishBtn) {
+        finishBtn.addEventListener('click', function() {
+            var resultSection = document.querySelector('.result-section');
+            if (resultSection) resultSection.style.display = 'none';
+            // Optionally reset upload form and image preview
+            var uploadForm = document.getElementById('upload-form');
+            if (uploadForm) uploadForm.reset();
+            var fileNameSpan = document.getElementById('file-name');
+            if (fileNameSpan) fileNameSpan.textContent = 'Choose an image';
+        });
+    }
+});
+</script>
 </body>
 </html>
