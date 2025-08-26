@@ -32,7 +32,7 @@ static/uploads/*
 !static/uploads/.gitkeep
 
 # ML Models (may be large)
-models/*.h5
+/
 
 # IDE files
 .idea/
