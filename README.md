@@ -35,3 +35,7 @@ The system uses three deep learning models:
 - Ensemble (majority voting): 98.0% accuracy
 
 For more details, see the system architecture and workflow documentation in the application.
+
+## Troubleshooting
+
+If you encounter GitHub push errors, follow the commands in the "Git Commands" section below.
