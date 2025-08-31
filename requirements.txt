@@ -67,7 +67,7 @@ nbclient==0.10.2
 nbconvert==7.16.5
 nbformat==5.10.4
 networkx==3.5
-numpy>=1.22.0
+numpy==1.23.5
 opencv-python==4.10.0.84
 opencv-python-headless==4.10.0.84
 opt_einsum==3.4.0
@@ -110,7 +110,7 @@ stack-data==0.6.3
 sympy==1.14.0
 tensorboard==2.18.0
 tensorboard-data-server==0.7.2
-tensorflow-cpu==2.9.1
+tensorflow-cpu==2.10.0
 termcolor==2.5.0
 timem==0.0.1
 tinycss2==1.4.0

@@ -9,8 +9,12 @@ mkdir -p static/uploads
 mkdir -p static/images/nft
 mkdir -p models
 
-# Install Python dependencies with more flexible versioning
-pip install --upgrade pip
+# Install system dependencies
+apt-get update -y || true
+apt-get install -y libgl1-mesa-glx libglib2.0-0 || true
+
+# Install Python dependencies
+pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 
 echo "Build completed successfully!"
