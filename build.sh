@@ -4,23 +4,23 @@ set -o errexit
 
 echo "Starting build process..."
 
+# Force Python version if available
+if command -v pyenv 1>/dev/null 2>&1; then
+  echo "Using pyenv to set Python version..."
+  pyenv install -s 3.9.16
+  pyenv local 3.9.16
+fi
+
 # Create required directories
 mkdir -p static/uploads
 mkdir -p static/images/nft
 mkdir -p models
-
-# Install system dependencies
-apt-get update -y || true
-apt-get install -y libgl1-mesa-glx libglib2.0-0 || true
 
 # Install Python dependencies
 pip install --upgrade pip setuptools wheel
 pip install -r requirements.txt
 
 echo "Build completed successfully!"
-# This is where models would be downloaded, handled by the app code
-mkdir -p models
-
 # Touch files to ensure directories exist
 touch static/uploads/.gitkeep
 touch static/images/nft/.gitkeep

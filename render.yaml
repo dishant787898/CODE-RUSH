@@ -1,11 +1,14 @@
 services:
   - type: web
-    name: waste-classification-app
+    name: waste-classification
     env: python
-    buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: gunicorn app:app
+    buildCommand: bash build.sh
+    startCommand: gunicorn wsgi:app
+    runtime: python3
+    pythonVersion: 3.9.16
     envVars:
       - key: ENVIRONMENT
         value: production
-      - key: SECRET_KEY
-        generateValue: true
+      - key: PYTHON_VERSION
+        value: 3.9.16
+    autoDeploy: true

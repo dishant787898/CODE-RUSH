@@ -90,14 +90,14 @@ def index():
     
     return render_template('index.html', demo_mode=True)
 
-# Add remaining routes from original app but with mock data
+# Add remaining routes from original app with mock data
 @app.route('/education')
 def education():
     return render_template('education.html')
 
 @app.route('/analytics')
 def analytics():
-    # Same mock data as original app
+    # Generate mock analytics data
     stats = {
         'total_classifications': 191,
         'organic_count': 71,
@@ -105,7 +105,7 @@ def analytics():
         'avg_confidence': 97
     }
     
-    # Same mock recent classifications as original app
+    # Generate mock recent classifications
     recent_items = [
         {
             'image_path': 'uploads/plastic_bottle.jpg',
@@ -114,15 +114,20 @@ def analytics():
             'classification': 'Recyclable Spotted',
             'confidence': '98.2%'
         },
-        # ...other mock items...
+        {
+            'image_path': 'uploads/banana_peel.jpg',
+            'date': datetime.datetime.now().strftime('%Y-%m-%d %H:%M'),
+            'model': 'VGG16',
+            'classification': 'Organic Spotted',
+            'confidence': '97.5%'
+        }
     ]
     
     return render_template('analytics.html', stats=stats, recent_items=recent_items)
 
 @app.route('/business')
 def business():
-    # Same mock data as original app
-    # ...
+    # Mock data for NFT showcase and premium features
     return render_template('business.html', nft_items=[], premium_features=[])
 
 @app.route('/api/model-status')
