@@ -8,22 +8,19 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
+# Install Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
 COPY . .
 
-# Create upload directory
-RUN mkdir -p static/uploads
+# Create necessary directories
+RUN mkdir -p static/uploads static/images/nft models
 
-# Environment variables
-ENV FLASK_APP=app.py
-ENV FLASK_ENV=production
+# Set environment variables
+ENV ENVIRONMENT=production
+ENV PORT=8080
 
-# Expose port
-EXPOSE 5000
-
-# Run with gunicorn
-CMD ["gunicorn", "--bind", "0.0.0.0:5000", "wsgi:app"]
+# Run the application
+CMD gunicorn --bind 0.0.0.0:$PORT wsgi:app

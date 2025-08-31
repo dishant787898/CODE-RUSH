@@ -4,9 +4,9 @@ setup(
     name="waste-classification-app",
     version="0.1",
     packages=find_packages(),
-    install_requires=[
-        "Flask>=2.0.1",
-        "tensorflow>=2.9.1",
+    include_package_data=True,
+    install_requires=[],  # We'll handle this in requirements.txt
+)
         "numpy>=1.23.1",
         "Pillow>=9.2.0",
         "python-dotenv>=0.20.0",
