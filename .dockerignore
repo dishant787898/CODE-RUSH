@@ -1,0 +1,28 @@
+# Git files
+.git
+.gitignore
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Local environment
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Development artifacts
+.idea/
+.vscode/
+
+# Large files that will be downloaded during build
+models/*.h5
+
+# Local uploads
+static/uploads/*
+!static/uploads/.gitkeep

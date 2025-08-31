@@ -1,8 +1,7 @@
-# Machine learning model files
+# Model files
 models/*.h5
 models/*.keras
 models/*.pb
-models/*.tflite
 
 # Python artifacts
 __pycache__/
@@ -22,7 +21,6 @@ lib64/
 parts/
 sdist/
 var/
-wheels/
 *.egg-info/
 .installed.cfg
 *.egg
@@ -31,15 +29,11 @@ wheels/
 venv/
 ENV/
 env/
-
-# Environment variables
 .env
 
-# Uploaded images and cached data
+# Uploaded images
 static/uploads/*
 !static/uploads/.gitkeep
-__pycache__/
-.cache/
 
 # IDE specific files
 .idea/
