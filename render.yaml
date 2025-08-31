@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: waste-classification-app
+    env: python
+    buildCommand: chmod +x build.sh && ./build.sh
+    startCommand: gunicorn app:app
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: SECRET_KEY
+        generateValue: true
