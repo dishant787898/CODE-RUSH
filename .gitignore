@@ -1,4 +1,10 @@
-# Python
+# Machine learning model files
+models/*.h5
+models/*.keras
+models/*.pb
+models/*.tflite
+
+# Python artifacts
 __pycache__/
 *.py[cod]
 *$py.class
@@ -16,30 +22,28 @@ lib64/
 parts/
 sdist/
 var/
+wheels/
 *.egg-info/
 .installed.cfg
 *.egg
 
-# Virtual Environment
+# Virtual environments
 venv/
 ENV/
+env/
 
 # Environment variables
 .env
 
-# Uploads
+# Uploaded images and cached data
 static/uploads/*
 !static/uploads/.gitkeep
+__pycache__/
+.cache/
 
-# ML Models (may be large)
-/
-
-# IDE files
+# IDE specific files
 .idea/
 .vscode/
 *.swp
 *.swo
-
-# OS specific
 .DS_Store
-Thumbs.db

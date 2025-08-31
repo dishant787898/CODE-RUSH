@@ -3,6 +3,7 @@ import numpy as np
 import uuid
 import datetime
 import json
+import sys  # Add this import for subprocess.check_call
 from flask import Flask, request, render_template, jsonify
 from tensorflow.keras.models import load_model, Sequential
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
@@ -396,6 +397,21 @@ def compare_models():
     except Exception as e:
         return jsonify({'error': str(e)})
 
+# After loading environment variables, add:
+# Check if running in production environment
+if os.getenv('ENVIRONMENT') == 'production':
+    # Create upload directory
+    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    
+    # Try to download models if they don't exist
+    try:
+        if not all(os.path.exists(os.path.join(MODEL_FOLDER, model)) for model in ['vgg16_waste_classification_tf.h5', 'waste_classification22_model.h5', 'inceptionv3_waste_classification_tf.h5']):
+            import subprocess
+            subprocess.check_call([sys.executable, 'download_models.py'])
+    except Exception as e:
+        print(f"Error downloading models: {e}")
+        print("Will try to use fallback dummy models.")
+
 # Add new static files (system architecture and workflow diagrams)
 # This won't require code changes, just make sure the images are in the right location
 
@@ -419,4 +435,5 @@ def model_status():
 
 if __name__ == '__main__':
     os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-    app.run(host='0.0.0.0', debug=True)  # Changed from app.run(debug=True)
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port, debug=False)
