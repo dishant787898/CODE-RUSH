@@ -67,7 +67,7 @@ nbclient==0.10.2
 nbconvert==7.16.5
 nbformat==5.10.4
 networkx==3.5
-numpy==1.21.6
+numpy>=1.22.0
 opencv-python==4.10.0.84
 opencv-python-headless==4.10.0.84
 opt_einsum==3.4.0

@@ -2,18 +2,18 @@
 # exit on error
 set -o errexit
 
-# Install system dependencies if needed
-apt-get update -y || true
-apt-get install -y libgl1-mesa-glx libglib2.0-0 || true
-
-# Install Python dependencies with pre-built wheels when possible
-pip install --upgrade pip setuptools wheel
-pip install --no-cache-dir -r requirements.txt
+echo "Starting build process..."
 
 # Create required directories
 mkdir -p static/uploads
 mkdir -p static/images/nft
+mkdir -p models
 
+# Install Python dependencies with more flexible versioning
+pip install --upgrade pip
+pip install -r requirements.txt
+
+echo "Build completed successfully!"
 # This is where models would be downloaded, handled by the app code
 mkdir -p models
 
