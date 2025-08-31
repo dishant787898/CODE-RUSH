@@ -1,26 +1,26 @@
-FROM python:3.9.16-slim
+FROM python:3.9-slim
 
 WORKDIR /app
 
-# Install system dependencies with updated package names
+# Install minimal dependencies
 RUN apt-get update && apt-get install -y \
     libgl1 \
-    libglib2.0-0 \
-    libsm6 \
-    libxext6 \
-    libxrender1 \
-    libgomp1 \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-
-# Install Python dependencies with specific versions
-RUN pip install --no-cache-dir --upgrade pip setuptools==65.6.3 wheel==0.40.0 && \
-    pip install --no-cache-dir -r requirements.txt
+COPY requirements-lite.txt .
+RUN pip install --no-cache-dir -r requirements-lite.txt
 
 # Create required directories
+RUN mkdir -p static/uploads static/images/nft models
+
+COPY . .
+
+ENV PORT=8000
+
+# Expose port and run the application
+EXPOSE 8000
+CMD gunicorn --bind 0.0.0.0:$PORT wsgi:app
 RUN mkdir -p static/uploads static/images/nft models
 
 # Copy application files
