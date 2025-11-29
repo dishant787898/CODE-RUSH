@@ -660,3 +660,141 @@ window.addEventListener('resize', function() {
         }
     }
 });
+~
+// ============================================================================
+// PLASTIC TYPE CLASSIFICATION FUNCTIONALITY
+// ============================================================================
+
+// Plastic type classification button handler
+document.addEventListener('DOMContentLoaded', function() {
+    const plasticTypeBtn = document.getElementById('classify-plastic-type-btn');
+    
+    if (plasticTypeBtn) {
+        plasticTypeBtn.addEventListener('click', function() {
+            const imagePath = this.getAttribute('data-image-path');
+            classifyPlasticType(imagePath, this);
+        });
+    }
+});
+
+// Function to classify plastic type
+async function classifyPlasticType(imagePath, button) {
+    // Get selected model
+    const modelSelect = document.getElementById('plastic-model-select');
+    const selectedModel = modelSelect ? modelSelect.value : 'Ensemble';
+    
+    // Show loading state
+    const originalContent = button.innerHTML;
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Analyzing...';
+    button.classList.add('loading');
+    
+    try {
+        const formData = new FormData();
+        formData.append('image_path', imagePath);
+        formData.append('model', selectedModel);
+        
+        const response = await fetch('/classify_plastic_type', {
+            method: 'POST',
+            body: formData
+        });
+        
+        const data = await response.json();
+        
+        if (data.success) {
+            displayPlasticTypeResult(data);
+            // Hide the button and model selection after successful classification
+            button.style.display = 'none';
+            document.querySelector('.plastic-type-prompt').style.display = 'none';
+            const modelSelection = document.querySelector('.plastic-model-selection');
+            if (modelSelection) modelSelection.style.display = 'none';
+        } else {
+            alert('Error: ' + (data.error || 'Failed to classify plastic type'));
+            button.innerHTML = originalContent;
+            button.classList.remove('loading');
+        }
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error classifying plastic type. Please try again.');
+        button.innerHTML = originalContent;
+        button.classList.remove('loading');
+    }
+}
+
+// Function to display plastic type result
+function displayPlasticTypeResult(data) {
+    const resultContainer = document.getElementById('plastic-type-result');
+    
+    // Set model used
+    const modelUsed = document.getElementById('plastic-model-used');
+    if (modelUsed) {
+        const modelIcons = {
+            'Ensemble': '🔗',
+            'EfficientNetV2': '⚡',
+            'Xception': '🎯',
+            'ViT': '🤖'
+        };
+        modelUsed.innerHTML = `<i class="fas fa-microchip"></i> ${modelIcons[data.model] || ''} ${data.model}`;
+    }
+    
+    // Set plastic type badge
+    const badge = document.getElementById('plastic-type-badge');
+    const plasticInfo = data.plastic_info || {};
+    badge.style.borderColor = plasticInfo.color || '#3498db';
+    badge.style.color = plasticInfo.color || '#3498db';
+    
+    // Set recycling code
+    document.getElementById('recycling-code').textContent = plasticInfo.recycling_code || '?';
+    document.getElementById('recycling-code').style.color = plasticInfo.color || '#3498db';
+    
+    // Set plastic name
+    document.getElementById('plastic-name').textContent = data.plastic_type;
+    document.getElementById('plastic-name').style.color = plasticInfo.color || '#3498db';
+    
+    // Set confidence
+    document.getElementById('plastic-confidence').textContent = data.confidence;
+    
+    // Set details
+    document.getElementById('plastic-full-name').textContent = plasticInfo.full_name || data.plastic_type;
+    document.getElementById('plastic-recyclability').textContent = plasticInfo.recyclability || 'Unknown';
+    document.getElementById('plastic-uses').textContent = plasticInfo.common_uses ? plasticInfo.common_uses.join(', ') : 'Various products';
+    document.getElementById('plastic-tips').textContent = plasticInfo.tips || 'Check local recycling guidelines.';
+    
+    // Set probability bars
+    const probabilityBars = document.getElementById('probability-bars');
+    probabilityBars.innerHTML = '';
+    
+    const plasticTypes = ['HDPE', 'PET', 'PP', 'PS'];
+    const colors = {
+        'HDPE': '#2ecc71',
+        'PET': '#3498db',
+        'PP': '#f39c12',
+        'PS': '#e74c3c'
+    };
+    
+    plasticTypes.forEach(type => {
+        const probability = data.probabilities[type] || 0;
+        const percentage = (probability * 100).toFixed(1);
+        
+        const barItem = document.createElement('div');
+        barItem.className = 'probability-bar-item';
+        barItem.innerHTML = `
+            <span class="plastic-label plastic-${type}">${type}</span>
+            <div class="bar-container">
+                <div class="bar-fill bar-${type}" style="width: 0%;">
+                    <span class="bar-value">${percentage}%</span>
+                </div>
+            </div>
+        `;
+        probabilityBars.appendChild(barItem);
+        
+        // Animate the bar after a short delay
+        setTimeout(() => {
+            const barFill = barItem.querySelector('.bar-fill');
+            barFill.style.width = `${percentage}%`;
+        }, 100);
+    });
+    
+    // Show the result container with animation
+    resultContainer.style.display = 'block';
+    resultContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}

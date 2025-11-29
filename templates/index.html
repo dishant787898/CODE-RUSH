@@ -22,9 +22,9 @@
             
             <ul class="nav-links">
                 <li class="active"><a href="/"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="/education"><i class="fas fa-book"></i> Education</a></li>
+                <!-- <li><a href="/education"><i class="fas fa-book"></i> Education</a></li>
                 <li><a href="/analytics"><i class="fas fa-chart-bar"></i> Analytics</a></li>
-                <li><a href="/business"><i class="fas fa-briefcase"></i> Business</a></li>
+                <li><a href="/business"><i class="fas fa-briefcase"></i> Business</a></li> -->
             </ul>
             
             <div class="nav-cta">
@@ -267,6 +267,82 @@
                                     {% else %}
                                     <p>This item should be placed in the <strong>organic waste bin</strong>.</p>
                                     {% endif %}
+                                </div>
+                                
+                                <!-- Plastic Type Classification Option -->
+                                {% if show_plastic_type_option %}
+                                <div class="plastic-type-section">
+                                    <div class="plastic-type-prompt">
+                                        <i class="fas fa-flask"></i>
+                                        <span>Want to know the specific type of plastic?</span>
+                                    </div>
+                                    <div class="plastic-model-selection">
+                                        <label for="plastic-model-select">Choose Model:</label>
+                                        <select id="plastic-model-select" class="plastic-model-select">
+                                            <option value="Ensemble" selected>🔗 Ensemble (All Models)</option>
+                                            <option value="EfficientNetV2">⚡ EfficientNetV2</option>
+                                            <option value="Xception">🎯 Xception</option>
+                                            <option value="ViT">🤖 Vision Transformer (ViT)</option>
+                                        </select>
+                                    </div>
+                                    <button id="classify-plastic-type-btn" class="btn-plastic-type" data-image-path="{{ image_path }}">
+                                        <i class="fas fa-search-plus"></i> Identify Plastic Type
+                                    </button>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                        
+                        <!-- Plastic Type Result (shown after classification) -->
+                        <div id="plastic-type-result" class="plastic-type-result" style="display: none;">
+                            <div class="plastic-type-header">
+                                <h4><i class="fas fa-recycle"></i> Plastic Type Identified</h4>
+                                <span class="plastic-model-used" id="plastic-model-used"></span>
+                            </div>
+                            <div class="plastic-type-content">
+                                <div class="plastic-type-main">
+                                    <div class="plastic-type-badge" id="plastic-type-badge">
+                                        <span class="recycling-code" id="recycling-code"></span>
+                                        <span class="plastic-name" id="plastic-name"></span>
+                                    </div>
+                                    <div class="plastic-confidence">
+                                        <span class="label">Confidence:</span>
+                                        <span class="value" id="plastic-confidence"></span>
+                                    </div>
+                                </div>
+                                <div class="plastic-type-details">
+                                    <div class="detail-item">
+                                        <i class="fas fa-info-circle"></i>
+                                        <div>
+                                            <strong>Full Name:</strong>
+                                            <span id="plastic-full-name"></span>
+                                        </div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-recycle"></i>
+                                        <div>
+                                            <strong>Recyclability:</strong>
+                                            <span id="plastic-recyclability"></span>
+                                        </div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-box"></i>
+                                        <div>
+                                            <strong>Common Uses:</strong>
+                                            <span id="plastic-uses"></span>
+                                        </div>
+                                    </div>
+                                    <div class="detail-item">
+                                        <i class="fas fa-lightbulb"></i>
+                                        <div>
+                                            <strong>Recycling Tips:</strong>
+                                            <span id="plastic-tips"></span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="plastic-probabilities">
+                                    <h5>All Plastic Type Probabilities:</h5>
+                                    <div class="probability-bars" id="probability-bars"></div>
                                 </div>
                             </div>
                         </div>
@@ -513,14 +589,14 @@
             </section> -->
 
             <!-- Workflow Section -->
-            <section class="workflow-section" data-aos="fade-up">
+            <!-- <section class="workflow-section" data-aos="fade-up">
                 <div class="workflow-container">
                     <div class="architecture-header">
                         <h2>How It Works</h2>
                         <p>Understanding the complete workflow from image upload to waste classification</p>
                     </div>
                     
-                    <!-- <img src="{{ url_for('static', filename='images/workflow.png') }}" alt="System Workflow" class="workflow-image" data-aos="zoom-in"> -->
+                     <img src="{{ url_for('static', filename='images/workflow.png') }}" alt="System Workflow" class="workflow-image" data-aos="zoom-in"> -->
                     <div class="architecture-caption">Fig. 2. Flowchart for the working of System</div>
                     
                     <div class="workflow-steps">
@@ -565,11 +641,11 @@
                         </div>
                     </div>
                 </div>
-            </section>
+            </section> -->
         </main>
 
         <!-- Footer -->
-        <footer>
+        <!-- <footer>
             <div class="footer-content">
                 <p>&copy; 2025 EcoSort AI - Waste Classification System</p>
                 <div class="social-links">
@@ -578,7 +654,7 @@
                     <a href="#" class="social-icon"><i class="fab fa-twitter"></i></a>
                 </div>
             </div>
-        </footer>
+        </footer> -->
     </div>
 
     <!-- Loading Overlay -->

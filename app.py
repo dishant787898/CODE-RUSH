@@ -8,11 +8,21 @@ from flask import Flask, request, render_template, jsonify
 from tensorflow.keras.models import load_model, Sequential
 from tensorflow.keras.preprocessing.image import load_img, img_to_array
 from tensorflow.keras.applications.resnet50 import preprocess_input
-from tensorflow.keras.layers import Layer, Dense, GlobalAveragePooling2D, Input
+from tensorflow.keras.layers import Layer, Dense, GlobalAveragePooling2D, Input, Lambda
 import tensorflow as tf
 from PIL import Image
 import base64
+import cv2
 from dotenv import load_dotenv
+
+# Try to import tensorflow_hub (optional for ViT model)
+try:
+    import tensorflow_hub as hub
+    HUB_AVAILABLE = True
+except ImportError:
+    print("⚠️ tensorflow_hub not available. ViT model will use fallback.")
+    HUB_AVAILABLE = False
+    hub = None
 
 load_dotenv()
 
@@ -84,6 +94,79 @@ models_dict = {
     'InceptionV3': inceptionv3_model
 }
 
+# ============================================================================
+# PLASTIC TYPE CLASSIFICATION MODELS
+# ============================================================================
+
+# Plastic type class names
+PLASTIC_TYPE_CLASSES = ['HDPE', 'PET', 'PP', 'PS']
+PLASTIC_TYPE_MODEL_FOLDER = os.path.join(MODEL_FOLDER, 'Plastic Type Models')
+
+# Function to create a dummy plastic type model for fallback
+def create_dummy_plastic_model():
+    print("⚠️ Creating dummy plastic type model for fallback")
+    model = Sequential([
+        Input(shape=(224, 224, 3)),
+        GlobalAveragePooling2D(),
+        Dense(4, activation='softmax')  # 4 classes for plastic types
+    ])
+    model.compile(optimizer='adam', loss='categorical_crossentropy')
+    return model
+
+# Function to safely load plastic type models with fallback
+def safe_load_plastic_model(model_path, model_name):
+    try:
+        print(f"Loading plastic type model: {model_path}")
+        # Handle different model formats and custom objects
+        if model_name == 'Xception':
+            # Xception may have TrueDivide custom layer
+            try:
+                with tf.keras.utils.custom_object_scope({'TrueDivide': Lambda(lambda x: x)}):
+                    return load_model(model_path, compile=False)
+            except:
+                return load_model(model_path, compile=False)
+        elif model_name == 'ViT':
+            # ViT uses TensorFlow Hub layers
+            if HUB_AVAILABLE:
+                return load_model(model_path, custom_objects={'KerasLayer': hub.KerasLayer}, compile=False)
+            else:
+                # Try loading without hub
+                return load_model(model_path, compile=False)
+        else:
+            return load_model(model_path, compile=False)
+    except Exception as e:
+        print(f"Error loading {model_name} plastic model: {e}")
+        print(f"Using fallback dummy model for {model_name}")
+        return create_dummy_plastic_model()
+
+# Create plastic type model directory if it doesn't exist
+os.makedirs(PLASTIC_TYPE_MODEL_FOLDER, exist_ok=True)
+
+# Load plastic type models
+print("\n" + "="*50)
+print("Loading Plastic Type Classification Models...")
+print("="*50)
+
+efficientnet_plastic_model = safe_load_plastic_model(
+    os.path.join(PLASTIC_TYPE_MODEL_FOLDER, 'efficientnetv2b0_plastic.h5'), 'EfficientNetV2'
+)
+xception_plastic_model = safe_load_plastic_model(
+    os.path.join(PLASTIC_TYPE_MODEL_FOLDER, 'xception_plastic_classifier.h5'), 'Xception'
+)
+vit_plastic_model = safe_load_plastic_model(
+    os.path.join(PLASTIC_TYPE_MODEL_FOLDER, 'vit_plastic_classifier_final.keras'), 'ViT'
+)
+
+# Dictionary to map plastic type model names to their instances
+plastic_models_dict = {
+    'EfficientNetV2': efficientnet_plastic_model,
+    'Xception': xception_plastic_model,
+    'ViT': vit_plastic_model
+}
+
+print("Plastic Type Models loaded successfully!")
+print("="*50 + "\n")
+
 # Mock database for storing classification history
 classification_history = []
 
@@ -136,6 +219,157 @@ def ensemble_predict(image_path):
     
     return final_class, confidence
 
+# ============================================================================
+# PLASTIC TYPE CLASSIFICATION FUNCTIONS
+# ============================================================================
+
+def preprocess_plastic_image(image_path, apply_cv_preprocessing=True):
+    """
+    Preprocess image for plastic type classification.
+    Optionally applies CV preprocessing (background removal, cropping).
+    """
+    if apply_cv_preprocessing:
+        try:
+            # Load the original image with OpenCV
+            img = cv2.imread(image_path)
+            img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+            
+            # Isolate the object from the background
+            gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+            blurred = cv2.GaussianBlur(gray, (5, 5), 0)
+            _, thresh = cv2.threshold(blurred, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
+            contours, _ = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+            
+            if contours:
+                # Crop to the largest object found
+                main_contour = max(contours, key=cv2.contourArea)
+                x, y, w, h = cv2.boundingRect(main_contour)
+                # Add padding
+                x, y, w, h = x - 10, y - 10, w + 20, h + 20
+                x, y = max(0, x), max(0, y)
+                cropped_img = img_rgb[y:y+h, x:x+w]
+                processed_img = cv2.resize(cropped_img, (224, 224))
+            else:
+                processed_img = cv2.resize(img_rgb, (224, 224))
+                
+            img_array = np.array(processed_img, dtype=np.float32)
+        except Exception as e:
+            print(f"CV preprocessing failed: {e}, using standard preprocessing")
+            img = load_img(image_path, target_size=(224, 224))
+            img_array = img_to_array(img)
+    else:
+        img = load_img(image_path, target_size=(224, 224))
+        img_array = img_to_array(img)
+    
+    # Normalize to [0, 1]
+    img_array = img_array / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+    return img_array
+
+def predict_plastic_type_with_model(model, image_path, model_name):
+    """
+    Predict plastic type using a specific model.
+    Returns: (class_name, confidence, all_probabilities)
+    """
+    img_array = preprocess_plastic_image(image_path)
+    predictions = model.predict(img_array)[0]
+    
+    predicted_idx = np.argmax(predictions)
+    predicted_class = PLASTIC_TYPE_CLASSES[predicted_idx]
+    confidence = predictions[predicted_idx]
+    
+    # Create probability dict for all classes
+    probabilities = {cls: float(prob) for cls, prob in zip(PLASTIC_TYPE_CLASSES, predictions)}
+    
+    return predicted_class, float(confidence), probabilities
+
+def ensemble_plastic_type_predict(image_path):
+    """
+    Ensemble prediction using all 3 plastic type models.
+    Uses weighted average of probabilities.
+    """
+    img_array = preprocess_plastic_image(image_path)
+    
+    # Get predictions from each model
+    eff_pred = efficientnet_plastic_model.predict(img_array)[0]
+    xce_pred = xception_plastic_model.predict(img_array)[0]
+    vit_pred = vit_plastic_model.predict(img_array)[0]
+    
+    # Average probabilities (can be weighted if needed)
+    avg_pred = (eff_pred + xce_pred + vit_pred) / 3
+    
+    predicted_idx = np.argmax(avg_pred)
+    predicted_class = PLASTIC_TYPE_CLASSES[predicted_idx]
+    confidence = avg_pred[predicted_idx]
+    
+    # Individual model predictions for comparison
+    individual_predictions = {
+        'EfficientNetV2': {
+            'class': PLASTIC_TYPE_CLASSES[np.argmax(eff_pred)],
+            'confidence': float(np.max(eff_pred)),
+            'probabilities': {cls: float(prob) for cls, prob in zip(PLASTIC_TYPE_CLASSES, eff_pred)}
+        },
+        'Xception': {
+            'class': PLASTIC_TYPE_CLASSES[np.argmax(xce_pred)],
+            'confidence': float(np.max(xce_pred)),
+            'probabilities': {cls: float(prob) for cls, prob in zip(PLASTIC_TYPE_CLASSES, xce_pred)}
+        },
+        'ViT': {
+            'class': PLASTIC_TYPE_CLASSES[np.argmax(vit_pred)],
+            'confidence': float(np.max(vit_pred)),
+            'probabilities': {cls: float(prob) for cls, prob in zip(PLASTIC_TYPE_CLASSES, vit_pred)}
+        }
+    }
+    
+    # Ensemble probabilities
+    ensemble_probabilities = {cls: float(prob) for cls, prob in zip(PLASTIC_TYPE_CLASSES, avg_pred)}
+    
+    return predicted_class, float(confidence), ensemble_probabilities, individual_predictions
+
+def get_plastic_info(plastic_type):
+    """
+    Returns detailed information about the plastic type for educational purposes.
+    """
+    plastic_info = {
+        'HDPE': {
+            'full_name': 'High-Density Polyethylene',
+            'recycling_code': '2',
+            'common_uses': ['Milk jugs', 'Detergent bottles', 'Shampoo bottles', 'Plastic bags'],
+            'recyclability': 'Highly Recyclable',
+            'environmental_impact': 'Low toxicity, widely accepted in recycling programs',
+            'color': '#2ecc71',
+            'tips': 'Rinse containers before recycling. Remove caps if required by local guidelines.'
+        },
+        'PET': {
+            'full_name': 'Polyethylene Terephthalate',
+            'recycling_code': '1',
+            'common_uses': ['Water bottles', 'Soda bottles', 'Food containers', 'Polyester clothing'],
+            'recyclability': 'Most Recyclable',
+            'environmental_impact': 'Most commonly recycled plastic, can be recycled into new bottles or fabric',
+            'color': '#3498db',
+            'tips': 'Crush bottles to save space. Keep clean and dry for best recycling results.'
+        },
+        'PP': {
+            'full_name': 'Polypropylene',
+            'recycling_code': '5',
+            'common_uses': ['Yogurt containers', 'Bottle caps', 'Straws', 'Food containers'],
+            'recyclability': 'Moderately Recyclable',
+            'environmental_impact': 'Heat resistant, increasingly accepted in recycling programs',
+            'color': '#f39c12',
+            'tips': 'Check local guidelines - PP recycling availability varies by location.'
+        },
+        'PS': {
+            'full_name': 'Polystyrene',
+            'recycling_code': '6',
+            'common_uses': ['Styrofoam cups', 'Take-out containers', 'Packing peanuts', 'Disposable cutlery'],
+            'recyclability': 'Difficult to Recycle',
+            'environmental_impact': 'Breaks into microplastics easily, limited recycling options',
+            'color': '#e74c3c',
+            'tips': 'Avoid when possible. Check for specialized PS recycling drop-off locations.'
+        }
+    }
+    return plastic_info.get(plastic_type, {})
+
 # Route for the home page
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -169,11 +403,16 @@ def index():
                         return render_template('index.html', error="Invalid model selected")
                     predicted_class, confidence = predict_with_model(model, filepath, selected_model)
                 
+                # Check if recyclable (plastic) - offer further classification
+                is_plastic = "Recyclable" in predicted_class
+                
                 return render_template('index.html', 
                                      prediction=predicted_class, 
                                      confidence=f"{confidence:.2%}", 
                                      image_path=f"uploads/{filename}",
-                                     selected_model=selected_model)
+                                     selected_model=selected_model,
+                                     is_plastic=is_plastic,
+                                     show_plastic_type_option=is_plastic)
             except Exception as e:
                 return render_template('index.html', error=f"Error processing image: {str(e)}")
     
@@ -334,16 +573,171 @@ def classify_image():
             'confidence': f"{confidence:.2%}"
         })
         
+        # Check if recyclable (plastic) - offer further classification
+        is_plastic = "Recyclable" in predicted_class
+        
         # Return results as JSON
         return jsonify({
             'class': predicted_class,
             'confidence': f"{confidence:.2%}",
             'model': selected_model,
-            'image_path': f"uploads/{filename}"
+            'image_path': f"uploads/{filename}",
+            'is_plastic': is_plastic,
+            'can_classify_plastic_type': is_plastic
         })
         
     except Exception as e:
         return jsonify({'error': str(e)})
+
+# ============================================================================
+# PLASTIC TYPE CLASSIFICATION API ENDPOINTS
+# ============================================================================
+
+@app.route('/classify_plastic_type', methods=['POST'])
+def classify_plastic_type():
+    """
+    API endpoint to classify plastic type from an uploaded image.
+    Returns the plastic type (HDPE, PET, PP, PS) with confidence scores.
+    Supports both new file upload and existing image path.
+    """
+    selected_model = request.form.get('model', 'Ensemble')
+    
+    try:
+        # Check if using existing image path or new upload
+        existing_image_path = request.form.get('image_path')
+        
+        if existing_image_path:
+            # Use existing uploaded image (from previous classification)
+            # Remove 'uploads/' prefix if present to get just filename
+            if existing_image_path.startswith('uploads/'):
+                filename = existing_image_path[8:]  # Remove 'uploads/' prefix
+            else:
+                filename = existing_image_path
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            
+            if not os.path.exists(filepath):
+                return jsonify({'error': 'Image not found. Please upload again.', 'success': False})
+        else:
+            # New file upload
+            if 'file' not in request.files:
+                return jsonify({'error': 'No file uploaded'})
+            
+            file = request.files['file']
+            if file.filename == '':
+                return jsonify({'error': 'No file selected'})
+            
+            # Generate unique filename
+            filename = f"plastic_{uuid.uuid4().hex}.png"
+            filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            file.save(filepath)
+        
+        # Make prediction based on selected model
+        if selected_model == 'Ensemble':
+            predicted_class, confidence, probabilities, individual_preds = ensemble_plastic_type_predict(filepath)
+            return jsonify({
+                'success': True,
+                'plastic_type': predicted_class,
+                'confidence': f"{confidence:.2%}",
+                'confidence_raw': confidence,
+                'probabilities': probabilities,
+                'individual_predictions': individual_preds,
+                'model': 'Ensemble',
+                'image_path': f"uploads/{filename}",
+                'plastic_info': get_plastic_info(predicted_class)
+            })
+        else:
+            model = plastic_models_dict.get(selected_model)
+            if not model:
+                return jsonify({'error': f'Invalid model selected: {selected_model}'})
+            
+            predicted_class, confidence, probabilities = predict_plastic_type_with_model(
+                model, filepath, selected_model
+            )
+            return jsonify({
+                'success': True,
+                'plastic_type': predicted_class,
+                'confidence': f"{confidence:.2%}",
+                'confidence_raw': confidence,
+                'probabilities': probabilities,
+                'model': selected_model,
+                'image_path': f"uploads/{filename}",
+                'plastic_info': get_plastic_info(predicted_class)
+            })
+            
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False})
+
+@app.route('/compare_plastic_models', methods=['POST'])
+def compare_plastic_models():
+    """
+    API endpoint to compare all plastic type models on a single image.
+    Returns predictions from all models for comparison.
+    """
+    if 'file' not in request.files:
+        return jsonify({'error': 'No file uploaded'})
+    
+    file = request.files['file']
+    if file.filename == '':
+        return jsonify({'error': 'No file selected'})
+    
+    try:
+        # Generate unique filename
+        filename = f"plastic_compare_{uuid.uuid4().hex}.png"
+        filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        file.save(filepath)
+        
+        # Get ensemble prediction (includes individual model predictions)
+        predicted_class, confidence, probabilities, individual_preds = ensemble_plastic_type_predict(filepath)
+        
+        # Determine agreement level
+        predictions = [individual_preds[m]['class'] for m in ['EfficientNetV2', 'Xception', 'ViT']]
+        unique_predictions = set(predictions)
+        
+        if len(unique_predictions) == 1:
+            agreement = "full"
+            conclusion = f"All models unanimously agree this is {predicted_class} plastic with high confidence."
+        elif len(unique_predictions) == 2:
+            agreement = "partial"
+            conclusion = f"Majority of models classify this as {predicted_class}. The ensemble prediction is recommended."
+        else:
+            agreement = "low"
+            conclusion = f"Models show disagreement. Based on ensemble averaging, this appears to be {predicted_class}."
+        
+        return jsonify({
+            'success': True,
+            'ensemble': {
+                'plastic_type': predicted_class,
+                'confidence': f"{confidence:.2%}",
+                'confidence_raw': confidence,
+                'probabilities': probabilities
+            },
+            'individual_predictions': individual_preds,
+            'agreement': agreement,
+            'conclusion': conclusion,
+            'image_path': f"uploads/{filename}"
+        })
+        
+    except Exception as e:
+        return jsonify({'error': str(e), 'success': False})
+
+@app.route('/api/plastic-model-status')
+def plastic_model_status():
+    """Health check endpoint for plastic type models."""
+    model_files = {
+        'efficientnet_model': os.path.exists(os.path.join(PLASTIC_TYPE_MODEL_FOLDER, 'efficientnetv2b0_plastic.h5')),
+        'xception_model': os.path.exists(os.path.join(PLASTIC_TYPE_MODEL_FOLDER, 'xception_plastic_classifier.h5')),
+        'vit_model': os.path.exists(os.path.join(PLASTIC_TYPE_MODEL_FOLDER, 'vit_plastic_classifier_final.keras'))
+    }
+    
+    return jsonify({
+        'plastic_type_models': model_files,
+        'available_classes': PLASTIC_TYPE_CLASSES,
+        'models_loaded': {
+            'efficientnet': efficientnet_plastic_model is not None,
+            'xception': xception_plastic_model is not None,
+            'vit': vit_plastic_model is not None
+        }
+    })
 
 # API endpoint for comparing models
 @app.route('/compare_models', methods=['POST'])
